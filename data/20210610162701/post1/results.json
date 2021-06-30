@@ -1,0 +1,21 @@
+{
+  "window_samples": 1000,
+  "threshold_ua": 20.0,
+  "o2_scfh": 13.994953970588236,
+  "fg_scfh": 10.816793029411766,
+  "fto_ratio": 0.7729066527938794,
+  "preheat_scfh": 24.811747000000004,
+  "wire_d_in": 0.041,
+  "standoff_in": 0.1,
+  "cut_o2_psig": 20.0,
+  "wire_material": "steel",
+  "feed_ips": "31",
+  "start_index": 5300,
+  "stop_index": 16800,
+  "window_n": 12,
+  "mean_ua": 43.446025795109584,
+  "median_ua": 40.55157866972022,
+  "std_ua": 18.92270572426608,
+  "rms_ua": 47.38803593014275,
+  "post2": 1
+}

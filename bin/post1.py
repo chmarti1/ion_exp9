@@ -1,4 +1,22 @@
 #!/usr/bin/python3
+#
+#   Preliminary post-processing on experiment 9 data.
+#   The experiment 9 data are collected on wires fed at a constant rate
+# into the flame with the cutting oxygen activated.  Post1 applies the
+# relevant calibrations and calculates meta data like total flow rate
+# and f/o ratio.  Most importantly, it produces plots of the current
+# signal throughout the test and accumulates statistics on the current
+# signal throughout.  The statistics are written to result.json in
+# the post1 directory.
+#
+# ** Raw Data Files **
+# flow.dat is a window of voltages measured from oxygen and fuel gas 
+# flow meters immediately prior to the test.
+#
+# burn.dat is the raw voltage and current measurement during the burn
+# with meta data embedded.
+# 
+
 
 import os,sys,shutil
 import numpy as np

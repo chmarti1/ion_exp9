@@ -1,0 +1,21 @@
+{
+  "window_samples": 1000,
+  "threshold_ua": 20.0,
+  "o2_scfh": 14.014559954044119,
+  "fg_scfh": 10.933058305147057,
+  "fto_ratio": 0.7801214123738615,
+  "preheat_scfh": 24.947618259191174,
+  "wire_d_in": 0.041,
+  "standoff_in": 0.1,
+  "cut_o2_psig": 20.0,
+  "wire_material": "hcsteel",
+  "feed_ips": "31",
+  "start_index": 5156,
+  "stop_index": 16000,
+  "window_n": 18,
+  "mean_ua": 114.71767817643405,
+  "median_ua": 98.5575592834149,
+  "std_ua": 87.2747539272503,
+  "rms_ua": 144.14238918255097,
+  "post2": 1
+}
