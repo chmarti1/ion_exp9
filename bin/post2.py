@@ -23,12 +23,13 @@ import numpy as np
 import matplotlib.pyplot as plt
 import json
 import lconfig as lc
+import lplot as lp
 
 data_dir = os.path.abspath('../data')
 
 materials = {
-    'steel':{'index':1, 'c_min_pct':0.06, 'c_max_pct':0.08, 'c_pct':0.07},
-    'hcsteel': {'index':2, 'c_min_pct':0.8, 'c_max_pct':0.95, 'c_pct':0.85},
+    'steel':{'index':1, 'c_min_pct':0.06, 'c_max_pct':0.1, 'c_pct':0.1},
+    'hcsteel': {'index':2, 'c_min_pct':0.80, 'c_max_pct':0.95, 'c_pct':0.85},
     'iron':{'index':0, 'c_min_pct':0.0, 'c_max_pct':.005, 'c_pct':0.0},
     'stainless':{'index':3, 'c_min_pct':0.0, 'c_max_pct':.008, 'c_pct':0.0}
     }
@@ -58,7 +59,7 @@ for this in os.listdir(data_dir):
             # Grab the material properties
             this_mat = materials[results['wire_material']]
             c_min_pct.append(this_mat['c_min_pct'])
-            c_max_pct.append(this_mat['c_min_pct'])
+            c_max_pct.append(this_mat['c_max_pct'])
             c_pct.append(this_mat['c_pct'])
             material.append(this_mat['index'])
             
@@ -84,14 +85,20 @@ c_min_pct = np.array(c_min_pct)
 c_max_pct = np.array(c_max_pct)
 c_pct = np.array(c_pct)
 
-c_min_pct -= c_pct
-c_max_pct -= c_pct
+c_min_pct = c_pct - c_min_pct
+c_max_pct = c_max_pct - c_pct
 
-fig,ax = plt.subplots(1,1)
-ax.errorbar(c_pct, current_ua, xerr=(c_min_pct, c_max_pct), yerr=current_std_ua, fmt='ko', capsize=2)
+C = np.polyfit(c_pct, current_ua, 1)
+
+x = np.linspace(0,1.0,21)
+y = np.polyval(C, x)
+
+ax = lp.init_fig('Carbon Content (%)', 'Current ($\mu$A)', label_size=14)
+ax.errorbar(c_pct, current_ua, xerr=(c_min_pct, c_max_pct), yerr=current_std_ua, fmt='ko', capsize=6, )
+ax.plot(x,y,'k--')
+ax.text(0.05,125,f'y = {C[0]:0.3f} x + {C[1]:0.3f}', backgroundcolor = 'w', fontsize=14)
+
 #ax.set_xscale('log')
 #ax.set_yscale('log')
 ax.grid(True)
-ax.set_xlabel('Carbon Content (%)')
-ax.set_ylabel('Current (uA)')
-fig.savefig('../post2.png')
+ax.get_figure().savefig('../post2.png')
