@@ -1,5 +1,5 @@
 {
-  "window_samples": 1000,
+  "window_samples": 500,
   "threshold_ua": 20.0,
   "o2_scfh": 13.998570615808825,
   "fg_scfh": 11.063022860294119,
@@ -10,11 +10,14 @@
   "cut_o2_psig": 45.0,
   "wire_material": "steel",
   "feed_ips": "6,8,10",
-  "start_index": 8156,
-  "stop_index": 53523,
-  "window_n": 45,
-  "mean_ua": 42.983352770510045,
-  "median_ua": 36.94564193678181,
-  "std_ua": 26.499934555177614,
-  "rms_ua": 50.49569433944651
+  "start_index": 8500,
+  "stop_index": 19500,
+  "max_ua": 106.82639122958221,
+  "min_ua": -5.70411211472245,
+  "mean_max_ua": 53.67429737215047,
+  "mean_min_ua": 8.6861618435996,
+  "mean_ua": 28.5285152679554,
+  "median_ua": 26.221062672978423,
+  "std_ua": 13.68198566840113,
+  "rms_ua": 31.639736333040105
 }

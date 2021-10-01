@@ -1,5 +1,5 @@
 {
-  "window_samples": 1000,
+  "window_samples": 500,
   "threshold_ua": 20.0,
   "o2_scfh": 14.198817803308824,
   "fg_scfh": 10.939225593749999,
@@ -10,12 +10,15 @@
   "cut_o2_psig": 20.0,
   "wire_material": "hcsteel",
   "feed_ips": "31",
-  "start_index": 9750,
-  "stop_index": 15700,
-  "window_n": 16,
-  "mean_ua": 135.3251520894613,
-  "median_ua": 99.84760494402796,
-  "std_ua": 180.8374841153442,
-  "rms_ua": 225.86520858512762,
-  "post2": 1
+  "start_index": 9500,
+  "stop_index": 20500,
+  "max_ua": 993.4222673898329,
+  "min_ua": -3.434788280217456,
+  "mean_max_ua": 786.3201817712724,
+  "mean_min_ua": 12.55788965756093,
+  "mean_ua": 196.89990209251079,
+  "median_ua": 140.9584412675106,
+  "std_ua": 191.42012261965468,
+  "rms_ua": 274.6110609348501,
+  "post2": 0
 }

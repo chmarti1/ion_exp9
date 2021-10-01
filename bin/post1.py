@@ -30,9 +30,11 @@ overwrite = True
 # Which post-processing step is this?
 post_name = 'post1'
 # How many samples should be included in a window
-window_samples = 1000
+window_samples = 500
 # Current threshold for start- and stop-of-test
 threshold_ua = 20.
+# Duration of test (approximate)
+duration_samples = 11000
 # What should we identify ourselves in error messages?
 POST_NAME = post_name.upper()
 
@@ -98,9 +100,15 @@ def post(target_dir, overwrite, startstop = None):
     # Initialize sliding statistics
     # Sample period
     t_s = 1. / burn.get(0,'samplehz')
-    # Start and stop indices
-    start_index = 0
-    stop_index = burn.data.shape[0]-1
+    # Initialize the start and stop indices
+    if startstop is not None:
+        start_index = int(startstop[0]//t_s)
+        stop_index = int(startstop[1]//t_s)
+    else:
+        start_index = -1
+        stop_index = -1
+
+
     # Total number of data points
     N = burn.data.shape[0]
     time_s = []
@@ -113,26 +121,11 @@ def post(target_dir, overwrite, startstop = None):
    
     i_ua = burn.get_channel('Current')
 
-    if startstop is None:
-        temp = np.nonzero(i_ua > threshold_ua)[0]
-        if len(temp) == 0:
-            print('    !!!EMPTY!!!      Aborting.')
-            return
-        start_index = int(temp[0])
-        stop_index = int(temp[-1])
-    else:
-        start_index = int(startstop[0] / t_s)
-        stop_index = int(startstop[1] / t_s)
-        
-    results['start_index'] = start_index
-    results['stop_index'] = stop_index
-    results['window_n'] = (stop_index - start_index) // window_samples
-    
     fig = lc.plt.figure(1)
     fig.set_size_inches(8,6)
     
     # Loop over the windows
-    for count,index in enumerate(range(start_index, stop_index, window_samples)):
+    for count,index in enumerate(range(0,N,window_samples)):
         temp = i_ua[index:(index+window_samples)]
         time_s.append(index * t_s)
         max_ua.append(np.max(temp))
@@ -141,6 +134,11 @@ def post(target_dir, overwrite, startstop = None):
         median_ua.append(np.median(temp))
         std_ua.append(np.std(temp))
         rms_ua.append(np.sqrt(std_ua[-1]**2 + mean_ua[-1]**2))
+        
+        # test for start of test
+        if start_index < 0 and mean_ua[-1] > threshold_ua:
+            start_index = index
+            stop_index = start_index + (duration_samples // window_samples) * window_samples
         
         # Generate the window plot
         fig.clf()
@@ -157,6 +155,20 @@ def post(target_dir, overwrite, startstop = None):
         
         fig.savefig(os.path.join(windows_dir, f'{count}.png'))
     
+    # If auto-detection failed
+    if start_index <0:
+        start_index = 0
+        stop_index = (duration_samples // window_samples) * window_samples
+    
+    start_window = start_index // window_samples
+    stop_window = stop_index // window_samples
+    
+    results['start_index'] = start_index
+    results['stop_index'] = stop_index
+    results['max_ua'] = np.max(i_ua[start_index:stop_index])
+    results['min_ua'] = np.min(i_ua[start_index:stop_index])
+    results['mean_max_ua'] = np.max(mean_ua[start_window:stop_window])
+    results['mean_min_ua'] = np.min(mean_ua[start_window:stop_window])
     results['mean_ua'] = np.mean(i_ua[start_index:stop_index])
     results['median_ua'] = np.median(i_ua[start_index:stop_index])
     results['std_ua'] = np.std(i_ua[start_index:stop_index])
@@ -173,7 +185,8 @@ def post(target_dir, overwrite, startstop = None):
     burn.show_channel('Current', ax=ax)
     ax.step(time_s, mean_ua, 'k--', where='post')
     ax.axhline(results['mean_ua'], color='k')
-    ax.set_xlim(start_index*t_s, stop_index*t_s)
+    ax.axvline(results['start_index'] * t_s, color=(0.8,0.8,0.8), linestyle='--')
+    ax.axvline(results['stop_index'] * t_s, color=(0.8,0.8,0.8), linestyle='--')
     fig.savefig(os.path.join(post_dir,'current.png'))
 
 # In the special case with no arguments, iterate over ALL data

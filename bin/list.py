@@ -24,13 +24,16 @@ for this in contents:
     # If post1 has been run
     if os.path.isdir(post1_dir):
         post1 = '1'
-        with open(os.path.join(post1_dir, 'results.json'), 'r') as ff:
-            results = json.load(ff)
-        # If these data are marked for inclusion
-        if 'post2' in results and results['post2']:
-            post2 = '2'
+        try:
+            with open(os.path.join(post1_dir, 'results.json'), 'r') as ff:
+                results = json.load(ff)
+            # If these data are marked for inclusion
+            if 'post2' in results and results['post2']:
+                post2 = '2'
             
-        material = results['wire_material']
+            material = results['wire_material']
+        except:
+            pass
     
     else:
         try:

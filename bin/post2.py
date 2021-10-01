@@ -39,9 +39,8 @@ c_min_pct = []
 c_max_pct = []
 c_pct = []
 current_ua = []
-current_max_ua = []
-current_min_ua = []
-current_std_ua = []
+max_ua = []
+min_ua = []
 
 for this in os.listdir(data_dir):
     include = True
@@ -49,38 +48,32 @@ for this in os.listdir(data_dir):
     post1_dir = os.path.join(source_dir, 'post1')
     # If post1 has been run
     if os.path.isdir(post1_dir):
-        with open(os.path.join(post1_dir, 'results.json'), 'r') as ff:
-            results = json.load(ff)
-        print(this)
-        # If these data are marked for inclusion
-        if 'post2' in results and results['post2']:
-            print(results['wire_material'])
-            
-            # Grab the material properties
-            this_mat = materials[results['wire_material']]
-            c_min_pct.append(this_mat['c_min_pct'])
-            c_max_pct.append(this_mat['c_max_pct'])
-            c_pct.append(this_mat['c_pct'])
-            material.append(this_mat['index'])
-            
-            # Re-load the raw data
-            dat = lc.LConf(os.path.join(source_dir, 'burn.dat'), data=True, cal=True)
-            index0 = results['start_index']
-            index1 = results['stop_index']
-            # Get statistics
-            I_uA = dat.get_channel(0)
-            current_ua.append(np.mean(I_uA[index0:index1]))
-            current_max_ua.append(np.max(I_uA[index0:index1]))
-            current_min_ua.append(np.min(I_uA[index0:index1]))
-            current_std_ua.append(np.std(I_uA[index0:index1]))
-            
+        try:
+            with open(os.path.join(post1_dir, 'results.json'), 'r') as ff:
+                results = json.load(ff)
+            print(this)
+            # If these data are marked for inclusion
+            if 'post2' in results and results['post2']:
+                print(results['wire_material'])
+                
+                # Grab the material properties
+                this_mat = materials[results['wire_material']]
+                c_min_pct.append(this_mat['c_min_pct'])
+                c_max_pct.append(this_mat['c_max_pct'])
+                c_pct.append(this_mat['c_pct'])
+                material.append(this_mat['index'])
+                
+                max_ua.append(results['mean_max_ua'])
+                min_ua.append(results['mean_min_ua'])
+                current_ua.append(results['mean_ua'])
+        except:
+            pass
             
 
 material = np.array(material)
 current_ua = np.array(current_ua)
-current_max_ua = np.array(current_max_ua) - current_ua
-current_min_ua = current_ua - np.array(current_min_ua)
-current_std_ua = np.array(current_std_ua)
+max_ua = np.array(max_ua) - current_ua
+min_ua = current_ua - np.array(min_ua)
 c_min_pct = np.array(c_min_pct)
 c_max_pct = np.array(c_max_pct)
 c_pct = np.array(c_pct)
@@ -94,7 +87,7 @@ x = np.linspace(0,1.0,21)
 y = np.polyval(C, x)
 
 ax = lp.init_fig('Carbon Content (%)', 'Current ($\mu$A)', label_size=14)
-ax.errorbar(c_pct, current_ua, xerr=(c_min_pct, c_max_pct), yerr=current_std_ua, fmt='ko', capsize=6, )
+ax.errorbar(c_pct, current_ua, xerr=(c_min_pct, c_max_pct), yerr=(min_ua, max_ua), fmt='ko', capsize=6, )
 ax.plot(x,y,'k--')
 ax.text(0.05,125,f'y = {C[0]:0.3f} x + {C[1]:0.3f}', backgroundcolor = 'w', fontsize=14)
 
