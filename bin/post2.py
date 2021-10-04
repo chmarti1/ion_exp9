@@ -41,6 +41,7 @@ c_pct = []
 current_ua = []
 max_ua = []
 min_ua = []
+std_ua = []
 
 for this in os.listdir(data_dir):
     include = True
@@ -54,7 +55,7 @@ for this in os.listdir(data_dir):
             print(this)
             # If these data are marked for inclusion
             if 'post2' in results and results['post2']:
-                print(results['wire_material'])
+                print('adding dataset:', results['wire_material'])
                 
                 # Grab the material properties
                 this_mat = materials[results['wire_material']]
@@ -65,6 +66,7 @@ for this in os.listdir(data_dir):
                 
                 max_ua.append(results['mean_max_ua'])
                 min_ua.append(results['mean_min_ua'])
+                std_ua.append(results['mean_std_ua'])
                 current_ua.append(results['mean_ua'])
         except:
             pass
@@ -81,13 +83,15 @@ c_pct = np.array(c_pct)
 c_min_pct = c_pct - c_min_pct
 c_max_pct = c_max_pct - c_pct
 
-C = np.polyfit(c_pct, current_ua, 1)
+# Exclude iron from the linear fit
+I = material != 0
+C = np.polyfit(c_pct[I], current_ua[I], 1)
 
 x = np.linspace(0,1.0,21)
 y = np.polyval(C, x)
 
 ax = lp.init_fig('Carbon Content (%)', 'Current ($\mu$A)', label_size=14)
-ax.errorbar(c_pct, current_ua, xerr=(c_min_pct, c_max_pct), yerr=(min_ua, max_ua), fmt='ko', capsize=6, )
+ax.errorbar(c_pct, current_ua, xerr=(c_min_pct, c_max_pct), yerr=std_ua, fmt='ko', capsize=6, )
 ax.plot(x,y,'k--')
 ax.text(0.05,125,f'y = {C[0]:0.3f} x + {C[1]:0.3f}', backgroundcolor = 'w', fontsize=14)
 

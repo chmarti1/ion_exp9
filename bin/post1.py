@@ -169,6 +169,7 @@ def post(target_dir, overwrite, startstop = None):
     results['min_ua'] = np.min(i_ua[start_index:stop_index])
     results['mean_max_ua'] = np.max(mean_ua[start_window:stop_window])
     results['mean_min_ua'] = np.min(mean_ua[start_window:stop_window])
+    results['mean_std_ua'] = np.std(mean_ua[start_window:stop_window])
     results['mean_ua'] = np.mean(i_ua[start_index:stop_index])
     results['median_ua'] = np.median(i_ua[start_index:stop_index])
     results['std_ua'] = np.std(i_ua[start_index:stop_index])
