@@ -80,6 +80,12 @@ c_min_pct = np.array(c_min_pct)
 c_max_pct = np.array(c_max_pct)
 c_pct = np.array(c_pct)
 
+# Save the conditions to a table
+X = np.array([c_pct, c_min_pct, c_max_pct, current_ua, std_ua]).transpose()
+np.savetxt('../post2.dat', X,
+    header='C(%) C_min(%) C_max(%) I(uA) I_std(uA)',
+    delimiter='\t')
+
 c_min_pct = c_pct - c_min_pct
 c_max_pct = c_max_pct - c_pct
 
@@ -99,3 +105,4 @@ ax.text(0.05,125,f'y = {C[0]:0.3f} x + {C[1]:0.3f}', backgroundcolor = 'w', font
 #ax.set_yscale('log')
 ax.grid(True)
 ax.get_figure().savefig('../post2.png')
+
